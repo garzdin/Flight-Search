@@ -4,7 +4,8 @@ import AutoComplete from 'material-ui/AutoComplete';
 import DatePicker from 'material-ui/DatePicker';
 import RaisedButton from 'material-ui/RaisedButton';
 import Toggle from 'material-ui/Toggle';
-import {Card, CardHeader, CardText} from 'material-ui/Card';
+import {Card, CardHeader, CardActions} from 'material-ui/Card';
+import FlatButton from 'material-ui/FlatButton';
 import './Home.css';
 
 class Home extends Component {
@@ -168,9 +169,9 @@ class Home extends Component {
                       title={this.state.selectedOrigin.value + " - " + result.destination}
                       subtitle={result.departure_date + " - " + result.return_date }
                     />
-                    <CardText>
-                      Price: {result.price} {this.state.resultsCurrency}
-                    </CardText>
+                    <CardActions>
+                      <FlatButton label={result.price + " " + this.state.resultsCurrency} />
+                    </CardActions>
                   </Card>
                 ))
               }
