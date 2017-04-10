@@ -4,6 +4,7 @@ import AutoComplete from 'material-ui/AutoComplete';
 import DatePicker from 'material-ui/DatePicker';
 import RaisedButton from 'material-ui/RaisedButton';
 import Toggle from 'material-ui/Toggle';
+import {Card, CardHeader, CardText} from 'material-ui/Card';
 import './Home.css';
 
 class Home extends Component {
@@ -17,7 +18,9 @@ class Home extends Component {
       selectedDestionation: null,
       departureDate: null,
       returnDate: null,
-      oneWay: false
+      oneWay: false,
+      searchResults: [],
+      resultsCurrency: null
     };
     this.handleUpdateInput = this.handleUpdateInput.bind(this);
     this.onOriginChosen = this.onOriginChosen.bind(this);
@@ -52,13 +55,11 @@ class Home extends Component {
   }
 
   onDepartureDateChanged(event, date) {
-    let dateString = date.getFullYear() + "-" + date.getMonth() + 1 + "-" + date.getDay();
-    this.setState({ departureDate: dateString });
+    this.setState({ departureDate: date.toISOString().split("T")[0] });
   }
 
   onReturnDateChanged(event, date) {
-    let dateString = date.getFullYear() + "-" + date.getMonth() + 1 + "-" + date.getDay();
-    this.setState({ returnDate: dateString });
+    this.setState({ returnDate: date.toISOString().split("T")[0] });
   }
 
   onOneWayToggle(event, isChecked) {
@@ -77,10 +78,10 @@ class Home extends Component {
       return false;
     }
 
-    fetch(`${this.baseURL}/flights/extensive-search?apikey=${this.apiKey}&origin=${this.state.selectedOrigin.value}&destination=${this.state.selectedDestionation.value}`)
+    fetch(`${this.baseURL}/flights/extensive-search?apikey=${this.apiKey}&origin=${this.state.selectedOrigin.value}&destination=${this.state.selectedDestionation.value}&departure_date=${this.state.departureDate}--${this.state.returnDate}&one-way=${this.state.oneWay}`)
     .then(response => response.json())
     .then(json => {
-      console.log(json);
+      this.setState({ searchResults: json.results, resultsCurrency: json.currency });
     })
     .catch(error => {
       console.error(error);
@@ -154,6 +155,23 @@ class Home extends Component {
               marginTop: '20px'
             }}
           />
+          <div className="search-results">
+            {this.state.searchResults &&
+              this.state.searchResults.map((result, index) => (
+                <Card
+                  key={index}
+                  className="search-results-card">
+                  <CardHeader
+                    title={this.state.selectedOrigin.value + " - " + result.destination}
+                    subtitle={result.departure_date + " - " + result.return_date }
+                  />
+                  <CardText>
+                    Price: {result.price} {this.state.resultsCurrency}
+                  </CardText>
+                </Card>
+              ))
+            }
+          </div>
         </div>
       </div>
     );

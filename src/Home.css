@@ -3,3 +3,12 @@
   height: auto;
   margin: auto;
 }
+
+.search-results {
+  margin-top: 20px;
+  margin-bottom: 20px;
+}
+
+.search-results .search-results-card {
+  margin-top: 10px;
+}
