@@ -152,26 +152,30 @@ class Home extends Component {
             fullWidth={true}
             onTouchTap={this.searchFlights}
             style={{
-              marginTop: '20px'
+              marginTop: '20px',
+              marginBottom: '20px'
             }}
           />
+        {this.state.searchResults.length > 0 &&
           <div className="search-results">
-            {this.state.searchResults &&
-              this.state.searchResults.map((result, index) => (
-                <Card
-                  key={index}
-                  className="search-results-card">
-                  <CardHeader
-                    title={this.state.selectedOrigin.value + " - " + result.destination}
-                    subtitle={result.departure_date + " - " + result.return_date }
-                  />
-                  <CardText>
-                    Price: {result.price} {this.state.resultsCurrency}
-                  </CardText>
-                </Card>
-              ))
-            }
+            <h2>Search results:</h2>
+              {
+                this.state.searchResults.map((result, index) => (
+                  <Card
+                    key={index}
+                    className="search-results-card">
+                    <CardHeader
+                      title={this.state.selectedOrigin.value + " - " + result.destination}
+                      subtitle={result.departure_date + " - " + result.return_date }
+                    />
+                    <CardText>
+                      Price: {result.price} {this.state.resultsCurrency}
+                    </CardText>
+                  </Card>
+                ))
+              }
           </div>
+        }
         </div>
       </div>
     );

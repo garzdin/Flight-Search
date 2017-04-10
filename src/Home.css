@@ -5,7 +5,10 @@
 }
 
 .search-results {
-  margin-top: 20px;
+  margin-bottom: 20px;
+}
+
+.search-results h2 {
   margin-bottom: 20px;
 }
 
