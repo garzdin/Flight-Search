@@ -93,7 +93,8 @@ class Home extends Component {
     return (
       <div>
         <AppBar
-          title="Flight search"
+          title="Flight Search"
+          iconClassNameLeft={null}
         />
         <div className="row">
           <AutoComplete
