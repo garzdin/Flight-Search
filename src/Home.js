@@ -26,12 +26,13 @@ class Home extends Component {
     this.onReturnDateChanged = this.onReturnDateChanged.bind(this);
     this.searchFlights = this.searchFlights.bind(this);
     this.onOneWayToggle = this.onOneWayToggle.bind(this);
+    this.baseURL = "https://api.sandbox.amadeus.com/v1.2";
     this.apiKey = "5Ta6I2ly8G6ZgGky2Y8CXCyVEpYucUDz";
   }
 
   handleUpdateInput(e) {
     if (e) {
-      fetch('https://api.sandbox.amadeus.com/v1.2/airports/autocomplete?apikey=5Ta6I2ly8G6ZgGky2Y8CXCyVEpYucUDz&term=' + e)
+      fetch(`${this.baseURL}/airports/autocomplete?apikey=${this.apiKey}&term=${e}`)
       .then(response => response.json())
       .then((json) => {
         this.setState({ dataSource: json });
@@ -75,6 +76,15 @@ class Home extends Component {
       this.setState({ destinationFieldError: "Origin is required" });
       return false;
     }
+
+    fetch(`${this.baseURL}/flights/extensive-search?apikey=${this.apiKey}&origin=${this.state.selectedOrigin.value}&destination=${this.state.selectedDestionation.value}`)
+    .then(response => response.json())
+    .then(json => {
+      console.log(json);
+    })
+    .catch(error => {
+      console.error(error);
+    });
   }
 
   render() {
@@ -92,6 +102,7 @@ class Home extends Component {
               text: 'label',
               value: 'value'
             }}
+            filter={AutoComplete.caseInsensitiveFilter}
             onUpdateInput={this.handleUpdateInput}
             onNewRequest={this.onOriginChosen}
             floatingLabelText="Origin"
@@ -105,6 +116,7 @@ class Home extends Component {
               text: 'label',
               value: 'value'
             }}
+            filter={AutoComplete.caseInsensitiveFilter}
             onUpdateInput={this.handleUpdateInput}
             onNewRequest={this.onDestionationChosen}
             floatingLabelText="Destination"
