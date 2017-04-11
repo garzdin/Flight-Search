@@ -6,6 +6,7 @@ import RaisedButton from 'material-ui/RaisedButton';
 import Toggle from 'material-ui/Toggle';
 import {Card, CardHeader, CardActions} from 'material-ui/Card';
 import FlatButton from 'material-ui/FlatButton';
+import RefreshIndicator from 'material-ui/RefreshIndicator';
 import './Home.css';
 
 class Home extends Component {
@@ -15,11 +16,14 @@ class Home extends Component {
       dataSource: [],
       originFieldError: null,
       destinationFieldError: null,
+      departureDateError: null,
+      returnDateError: null,
       selectedOrigin: null,
       selectedDestionation: null,
       departureDate: null,
       returnDate: null,
       oneWay: false,
+      loadingStatus: "hide",
       searchResults: [],
       resultsCurrency: null
     };
@@ -73,7 +77,7 @@ class Home extends Component {
   }
 
   searchFlights(event) {
-    this.setState({ originFieldError: null, destinationFieldError: null });
+    this.setState({ originFieldError: null, destinationFieldError: null, departureDateError: null, returnDateError: null });
     if (!this.state.selectedOrigin) {
       this.setState({ originFieldError: "Origin is required" });
       return false;
@@ -83,11 +87,20 @@ class Home extends Component {
       this.setState({ destinationFieldError: "Origin is required" });
       return false;
     }
+    if (!this.state.departureDate) {
+      this.setState({ departureDateError: "Departure date is required" });
+      return false;
+    }
+    if (!this.state.returnDate) {
+      this.setState({ returnDateError: "Return date is required" });
+      return false;
+    }
 
+    this.setState({ loadingStatus: "loading" });
     fetch(`${this.baseURL}/flights/extensive-search?apikey=${this.apiKey}&origin=${this.state.selectedOrigin.value}&destination=${this.state.selectedDestionation.value}&departure_date=${this.state.departureDate}--${this.state.returnDate}&one-way=${this.state.oneWay}`)
     .then(response => response.json())
     .then(json => {
-      this.setState({ searchResults: json.results, resultsCurrency: json.currency });
+      this.setState({ loadingStatus: "hide", searchResults: json.results, resultsCurrency: json.currency });
     })
     .catch(error => {
       console.error(error);
@@ -132,7 +145,8 @@ class Home extends Component {
           />
           <DatePicker
             name="departure"
-            hintText="Departure date (none)"
+            hintText="Departure date"
+            errorText={this.state.departureDateError}
             onChange={this.onDepartureDateChanged}
             shouldDisableDate={this.disablePastDates}
             style={{
@@ -142,7 +156,8 @@ class Home extends Component {
           />
           <DatePicker
             name="return"
-            hintText="Return date (none)"
+            hintText="Return date"
+            errorText={this.state.returnDateError}
             onChange={this.onReturnDateChanged}
             shouldDisableDate={this.disablePastDates}
             style={{
@@ -163,6 +178,16 @@ class Home extends Component {
             style={{
               marginTop: '20px',
               marginBottom: '20px'
+            }}
+          />
+          <RefreshIndicator
+            size={40}
+            left={-20}
+            top={20}
+            status={this.state.loadingStatus}
+            style={{
+              position: 'relative',
+              marginLeft: '50%'
             }}
           />
         {this.state.searchResults.length > 0 &&
