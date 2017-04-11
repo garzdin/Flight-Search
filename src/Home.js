@@ -28,6 +28,7 @@ class Home extends Component {
     this.onDestionationChosen = this.onDestionationChosen.bind(this);
     this.onDepartureDateChanged = this.onDepartureDateChanged.bind(this);
     this.onReturnDateChanged = this.onReturnDateChanged.bind(this);
+    this.disablePastDates = this.disablePastDates.bind(this);
     this.searchFlights = this.searchFlights.bind(this);
     this.onOneWayToggle = this.onOneWayToggle.bind(this);
     this.baseURL = "https://api.sandbox.amadeus.com/v1.2";
@@ -61,6 +62,10 @@ class Home extends Component {
 
   onReturnDateChanged(event, date) {
     this.setState({ returnDate: date.toISOString().split("T")[0] });
+  }
+
+  disablePastDates(date) {
+    return date < new Date();
   }
 
   onOneWayToggle(event, isChecked) {
@@ -129,6 +134,7 @@ class Home extends Component {
             name="departure"
             hintText="Departure date (none)"
             onChange={this.onDepartureDateChanged}
+            shouldDisableDate={this.disablePastDates}
             style={{
               float: 'left',
               marginTop: '20px'
@@ -138,6 +144,7 @@ class Home extends Component {
             name="return"
             hintText="Return date (none)"
             onChange={this.onReturnDateChanged}
+            shouldDisableDate={this.disablePastDates}
             style={{
               float: 'right',
               marginTop: '20px',
